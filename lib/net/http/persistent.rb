@@ -479,7 +479,7 @@ class Net::HTTP::Persistent
   #   proxy.user     = 'AzureDiamond'
   #   proxy.password = 'hunter2'
 
-  def initialize name = nil, proxy = nil
+  def initialize name = nil, proxy = nil, interface = nil
     @name = name
 
     @debug_output     = nil
@@ -494,6 +494,7 @@ class Net::HTTP::Persistent
     @idle_timeout     = 5
     @max_requests     = nil
     @socket_options   = []
+    @interface        = interface
 
     @socket_options << [Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1] if
       Socket.const_defined? :TCP_NODELAY
@@ -696,6 +697,7 @@ class Net::HTTP::Persistent
   def start connection
     connection.set_debug_output @debug_output if @debug_output
     connection.open_timeout = @open_timeout if @open_timeout
+    connection.local_host = @interface if @interface
 
     connection.start
 
